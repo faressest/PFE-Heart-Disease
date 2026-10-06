@@ -1,0 +1,405 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDIA clinic | L'IA au service de votre cœur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #3b82f6;       
+            --primary-dark: #2563eb;  
+            --secondary: #0ea5e9;     
+            --bg-body: #0f172a; /* Fond bleu nuit profond */
+            --text-main: #f8fafc; /* Texte blanc cassé */
+            --text-muted: #94a3b8; /* Gris clair pour la lecture */
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            animation: pulseGlow 15s ease-in-out infinite alternate;
+        }
+
+        /* Arrière-plan dynamique */
+        .dynamic-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; 
+            pointer-events: none; 
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: drift 45s linear infinite;
+        }
+
+        @keyframes drift {
+            0% { background-position: 0px 0px; }
+            100% { background-position: 600px 600px; }
+        }
+        @keyframes pulseGlow {
+            0% { background-size: 100% 100%; }
+            100% { background-size: 130% 130%; }
+        }
+
+        /* Navbar */
+        .navbar { 
+            background: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 0; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .navbar-brand-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 800;
+            color: var(--text-main) !important;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        .navbar-brand-logo {
+            height: 45px; 
+            margin-right: 12px;
+        }
+        .brand-highlight { color: var(--primary); }
+
+        /* --- L'ESPACE EST RÉDUIT ICI --- */
+        .hero { 
+            padding: 80px 0 80px; /* Changé de 160px à 80px pour remonter le contenu */
+            text-align: center; 
+        }
+
+        /* Badge au dessus du titre */
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 6px 18px 6px 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        .hero-badge:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15); }
+        .hero-badge .badge-highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-right: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 { 
+            font-size: 4.5rem; 
+            font-weight: 800; 
+            letter-spacing: -2.5px; 
+            line-height: 1.15;
+            margin-bottom: 25px;
+            color: var(--text-main);
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, #60a5fa, #38bdf8); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .hero p { 
+            font-size: 1.3rem; 
+            color: var(--text-muted); 
+            margin-bottom: 45px; 
+            line-height: 1.8; 
+            font-weight: 400;
+        }
+
+        /* Boutons */
+        .btn-main {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; 
+            border-radius: 50px; 
+            padding: 16px 45px;
+            font-weight: 600; 
+            font-size: 1.2rem;
+            transition: all 0.3s ease; 
+            text-decoration: none; 
+            display: inline-block;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-main:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.5); 
+            color: white; 
+        }
+        .navbar .btn-main {
+            padding: 10px 25px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Cartes des symptômes */
+        .symptom-card {
+            background: rgba(30, 41, 59, 0.85); 
+            backdrop-filter: blur(5px);
+            border-radius: 24px; 
+            padding: 30px 25px; 
+            border: 2px solid rgba(14, 165, 233, 0.2); 
+            transition: all 0.4s ease; 
+            height: 100%; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .symptom-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+            border-color: rgba(59, 130, 246, 0.5); 
+        }
+        .symptom-card h5 { 
+            font-weight: 700; 
+            font-size: 1.15rem; 
+            margin-bottom: 12px; 
+            color: var(--text-main);
+            letter-spacing: -0.5px; 
+        }
+        .symptom-card p { 
+            font-size: 0.95rem; 
+            color: var(--text-muted);
+            margin-bottom: 0; 
+            line-height: 1.6;
+        }
+        
+        .icon-box { 
+            width: 65px; 
+            height: 65px; 
+            background: rgba(59, 130, 246, 0.15); 
+            color: var(--primary); 
+            border-radius: 18px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.5rem; 
+            margin: 0 auto 20px; 
+            transition: all 0.3s ease;
+        }
+        .symptom-card:hover .icon-box {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        /* Boîte de statistiques */
+        .stats-box { 
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary)); 
+            color: white; 
+            border-radius: 30px; 
+            padding: 60px 40px; 
+            margin-top: 60px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .stats-box::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%), radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .stat-item h2 { 
+            font-weight: 800; 
+            font-size: 3.5rem; 
+            margin-bottom: 5px;
+            letter-spacing: -2px; 
+        }
+        .stat-item p {
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        /* Ajustements pour mobile */
+        @media (max-width: 768px) {
+            .hero { padding-top: 60px; } /* L'espace est aussi réduit sur mobile */
+            .hero h1 { font-size: 2.8rem; letter-spacing: -1px; }
+            .stat-item { margin-bottom: 30px; }
+            .stat-item:last-child { margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dynamic-bg"></div>
+
+<nav class="navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand-container" href="#">
+            <img src="{% static 'prediction/images/logo_idia_clinic.png' %}" alt="Logo IDIA clinic" class="navbar-brand-logo">
+            IDIA <span class="brand-highlight ms-1">clinic</span>
+        </a>
+        <a href="{% url 'predict_heart' %}" class="btn-main">Espace Diagnostic</a>
+    </div>
+</nav>
+
+<section class="container hero">
+    <div class="hero-badge">
+        <span class="badge-highlight"><i class="fas fa-sparkles me-1"></i> Nouveau</span>
+        Modèle d'IA entraîné sur le dataset Cleveland
+    </div>
+
+    <h1>Prévenir aujourd'hui,<br><span>pour vivre demain.</span></h1>
+    <p class="mx-auto" style="max-width: 700px;">Analysez vos risques cardiaques grâce à un modèle d'Intelligence Artificielle de pointe, croisant 13 facteurs cliniques déterminants pour une précision maximale.</p>
+    
+    <a href="{% url 'predict_heart' %}" class="btn-main">
+        <i class="fas fa-stethoscope me-2"></i>Commencer mon Bilan Gratuit
+    </a>
+</section>
+
+<section class="container mb-5">
+    <div class="text-center mb-5 pb-3 mt-4">
+        <h2 class="fw-bold fs-1" style="letter-spacing: -1px; color: var(--text-main);">Comprendre les 13 Facteurs de Risque</h2>
+        <p class="text-muted fs-5 mt-3">Notre système analyse chaque détail de votre profil pour un diagnostic ultra-précis.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-calendar-alt"></i></div>
+                <h5>Âge</h5>
+                <p>L'âge est un facteur déterminant dans la rigidité des parois artérielles.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-venus-mars"></i></div>
+                <h5>Sexe</h5>
+                <p>Les probabilités de maladies varient selon les caractéristiques biologiques.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-hand-holding-medical"></i></div>
+                <h5>Type de Douleur</h5>
+                <p>La nature de la douleur (CP) indique le degré d'urgence cardiaque.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-heart-circle-bolt"></i></div>
+                <h5>Tension au Repos</h5>
+                <p>Une pression artérielle élevée fatigue le muscle du cœur (90 - 120 mm Hg).</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-burger"></i></div>
+                <h5>Cholestérol</h5>
+                <p>Un taux élevé favorise l'accumulation de plaques dans les artères.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-cubes-stacked"></i></div>
+                <h5>Glycémie</h5>
+                <p>Le sucre à jeun supérieur à 120mg/dl est un facteur aggravant connu.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-file-waveform"></i></div>
+                <h5>Résultat ECG</h5>
+                <p>L'activité électrique du cœur révèle d'éventuelles anomalies au repos.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-heartbeat"></i></div>
+                <h5>Fréquence Max</h5>
+                <p>La capacité du cœur à monter en rythme (thalach) lors d'un effort.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-person-running"></i></div>
+                <h5>Angine d'Effort</h5>
+                <p>Détermine si l'exercice physique provoque une douleur thoracique.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-arrow-trend-down"></i></div>
+                <h5>Dépression ST</h5>
+                <p>Mesure de l'oldpeak, indicateur fort de stress ou souffrance myocardique.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-chart-area"></i></div>
+                <h5>Pente ST</h5>
+                <p>L'inclinaison de la pente après un effort physique intense.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-x-ray"></i></div>
+                <h5>Vaisseaux (CA)</h5>
+                <p>Nombre de vaisseaux bouchés identifiés par imagerie médicale.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 offset-lg-4 mt-4">
+            <div class="symptom-card">
+                <div class="icon-box"><i class="fas fa-vial-virus"></i></div>
+                <h5>Trouble Sanguin (Thalassemia)</h5>
+                <p>Analyse de la circulation pour détecter des défauts de flux sanguin majeurs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container mb-5 pb-5">
+    <div class="stats-box text-center">
+        <div class="row position-relative" style="z-index: 1;">
+            <div class="col-md-4 stat-item">
+                <h2>93%</h2>
+                <p>Précision estimée du modèle</p>
+            </div>
+            <div class="col-md-4 stat-item">
+                <h2><i class="fas fa-bolt text-warning"></i></h2>
+                <p>Analyse instantanée</p>
+            </div>
+            <div class="col-md-4 stat-item">
+                <h2>303</h2>
+                <p>Dossiers cliniques validés</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environnements virtuels
+venv/
+env/
+ENV/
+.env
+.venv
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# (Optionnel) Si vous vouliez ignorer les gros fichiers de modèles ou de données, vous pourriez décommenter les lignes ci-dessous.
+# Mais comme les vôtres sont petits (ex: pkl de 60ko), on peut les laisser pour que votre ami puisse lancer le projet directement.
+# *.pkl
+# *.csv
+# *.data

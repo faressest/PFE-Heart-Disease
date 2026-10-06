@@ -1,0 +1,395 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic de Précision | IDIA clinic Lab</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+
+    <style>
+        :root {
+            --primary: #3b82f6;       
+            --primary-dark: #2563eb;  
+            --secondary: #0ea5e9;     
+            --bg-body: #0f172a; 
+            --card-bg: rgba(30, 41, 59, 0.85); 
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --border-light: rgba(255, 255, 255, 0.08);
+            --safe: #10b981;  
+            --warning: #f59e0b;
+            --danger: #ef4444; 
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            animation: pulseGlow 15s ease-in-out infinite alternate;
+        }
+
+        .dynamic-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; 
+            pointer-events: none; 
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: drift 45s linear infinite;
+        }
+
+        @keyframes drift { 0% { background-position: 0px 0px; } 100% { background-position: 600px 600px; } }
+        @keyframes pulseGlow { 0% { background-size: 100% 100%; } 100% { background-size: 130% 130%; } }
+
+        .navbar { 
+            background: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(12px); 
+            border-bottom: 1px solid var(--border-light);
+            padding: 15px 0; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .navbar-brand-container {
+            display: flex; align-items: center; text-decoration: none;
+            font-weight: 800; color: var(--text-main) !important; font-size: 1.5rem; letter-spacing: -0.5px;
+        }
+        .navbar-brand-logo { height: 45px; margin-right: 12px; }
+        .brand-highlight { color: var(--primary); }
+
+        .stepper { display: flex; justify-content: space-between; margin-bottom: 40px; position: relative; }
+        .step { 
+            width: 30px; height: 30px; background: var(--bg-body); 
+            border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; z-index: 2; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 0.8rem; color: var(--text-muted);
+        }
+        .step.active { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        .step.completed { background: var(--primary); border-color: var(--primary); color: white; }
+
+        .medical-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .form-label { font-weight: 600; font-size: 0.9rem; color: var(--text-main); margin-bottom: 8px; }
+        
+        body .medical-card input.form-control, 
+        body .medical-card select.form-select {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            color: #ffffff !important; 
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 12px !important;
+            padding: 12px !important;
+        }
+
+        body .medical-card input.form-control:focus, 
+        body .medical-card select.form-select:focus {
+            background-color: rgba(15, 23, 42, 1) !important;
+            color: #ffffff !important; 
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25) !important;
+        }
+
+        body .medical-card input.form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important; 
+        }
+
+        body .medical-card select.form-select option {
+            background-color: #0f172a !important; 
+            color: #ffffff !important; 
+        }
+
+        .btn-analyze {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; padding: 15px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+        .btn-analyze:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(37, 99, 235, 0.5); color: white;}
+
+        #loading-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); z-index: 9999; flex-direction: column;
+            align-items: center; justify-content: center; color: var(--text-main);
+        }
+        .radar {
+            width: 150px; height: 150px; border: 4px solid var(--primary);
+            border-radius: 50%; position: relative; animation: pulse 1.5s infinite;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        .radar::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 100%; height: 2px;
+            background: var(--primary); transform-origin: left; animation: rotate 2s linear infinite;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 0.2; } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .score-circle-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+        }
+        .score-circle-svg {
+            transform: rotate(-90deg); 
+            width: 100%;
+            height: 100%;
+        }
+        .score-circle-bg {
+            fill: rgba(15, 23, 42, 0.5);
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 8;
+        }
+        .score-circle-progress {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 339.292; 
+            stroke-dashoffset: 339.292; 
+            transition: stroke-dashoffset 2.0s ease-out, stroke 0.5s ease-out;
+        }
+        .progress-safe { stroke: var(--safe); filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)); }
+        .progress-warning { stroke: var(--warning); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
+        .progress-danger { stroke: var(--danger); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
+        
+        .score-text-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.8rem; /* TAILLE AGRANDIE ICI */
+            font-weight: 800;
+            transition: color 0.5s ease-out;
+        }
+        
+        .result-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .result-box .text-muted.mb-4 {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        .result-box .text-muted {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+
+        @media print {
+            body { background: white !important; }
+            .dynamic-bg, nav, #diagForm, .stepper, .btn, h3, p.text-center.mb-5 { display: none !important; }
+            .medical-card { box-shadow: none !important; border: 1px solid #ccc !important; color: black !important; background: white !important; }
+            h2, h6, .text-muted, small { color: black !important; }
+            .score-circle-bg { fill: white !important; stroke: #eee !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dynamic-bg"></div>
+
+<div id="loading-overlay">
+    <div class="radar mb-4"></div>
+    <h4 class="fw-bold">Analyse bioclinique en cours...</h4>
+    <p class="text-muted">L'IA traite vos constantes vitales</p>
+</div>
+
+<nav class="navbar mb-5 sticky-top">
+    <div class="container">
+        <a class="navbar-brand-container" href="{% url 'home' %}">
+            <img src="{% static 'prediction/images/logo_idia_clinic.png' %}" alt="Logo IDIA clinic" class="navbar-brand-logo">
+            IDIA <span class="brand-highlight ms-1">clinic</span>
+            <span class="ms-2 fw-normal text-muted" style="font-size: 0.9rem;">| Lab</span>
+        </a>
+    </div>
+</nav>
+
+<div class="container pb-5">
+    {% if result %}
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            <div class="medical-card text-center animate__animated animate__zoomIn">
+                
+                <div class="score-circle-container">
+                    <svg class="score-circle-svg" viewBox="0 0 120 120">
+                        <circle class="score-circle-bg" cx="60" cy="60" r="54"></circle>
+                        <circle class="score-circle-progress progress-safe" cx="60" cy="60" r="54" id="progressCircle"></circle>
+                    </svg>
+                    <div class="score-text-overlay" id="scoreText">0%</div>
+                </div>
+
+                <h2 class="fw-bold" style="color: var(--text-main);">{{ result }}</h2>
+                <p class="text-muted mb-4">Indice de probabilité basé sur l'algorithme k-NN</p>
+                
+                <div class="row text-start mt-4 g-3">
+                    <div class="col-md-6">
+                        <div class="result-box h-100">
+                            <h6 class="fw-bold" style="color: var(--primary);"><i class="fas fa-magnifying-glass-chart me-2"></i> Pourquoi ce score ?</h6>
+                            <small class="text-muted">Les facteurs comme l'âge et le type de douleur thoracique (CP) ont influencé cette prédiction à {{ probability }}%.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="result-box h-100">
+                            <h6 class="fw-bold" style="color: var(--secondary);"><i class="fas fa-clipboard-check me-2"></i> Recommandation</h6>
+                            <small class="text-muted">
+                                {% if probability > 50 %}
+                                    Consultez notre clinique pour un test d'effort complémentaire.<br> Notre email : <span style="color:var(--text-main);">idiaclinique@gmail.com</span>
+                                {% else %}
+                                    Maintenez votre hygiène de vie actuelle. Excellentes constantes.
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                {% if input_summary %}
+                <div class="row text-start mt-4">
+                    <div class="col-12">
+                        <div class="result-box">
+                            <h6 class="fw-bold" style="color: white;"><i class="fas fa-list-check me-2"></i> Constantes saisies pour ce diagnostic</h6>
+                            <div class="row text-muted small mt-2 g-2">
+                                <div class="col-4"><strong>Âge:</strong> {{ input_summary.age }} ans</div>
+                                <div class="col-4"><strong>Sexe:</strong> {{ input_summary.sex }}</div>
+                                <div class="col-4"><strong>Douleur (CP):</strong> {{ input_summary.cp }}</div>
+                                <div class="col-4"><strong>Tension:</strong> {{ input_summary.trestbps }} mmHg</div>
+                                <div class="col-4"><strong>Cholestérol:</strong> {{ input_summary.chol }} mg/dl</div>
+                                <div class="col-4"><strong>Glycémie >120:</strong> {{ input_summary.fbs }}</div>
+                                <div class="col-4"><strong>ECG repos:</strong> {{ input_summary.restecg }}</div>
+                                <div class="col-4"><strong>FC Max:</strong> {{ input_summary.thalach }}</div>
+                                <div class="col-4"><strong>Angine effort:</strong> {{ input_summary.exang }}</div>
+                                <div class="col-4"><strong>Dépression ST:</strong> {{ input_summary.oldpeak }}</div>
+                                <div class="col-4"><strong>Pente ST:</strong> {{ input_summary.slope }}</div>
+                                <div class="col-4"><strong>Vaisseaux (CA):</strong> {{ input_summary.ca }}</div>
+                                <div class="col-4"><strong>Thalassémie:</strong> {{ input_summary.thal }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mt-4 d-flex justify-content-center gap-3">
+                    <button onclick="window.print()" class="btn btn-outline-light rounded-pill px-4"><i class="fas fa-print me-2"></i> Imprimer le rapport</button>
+                    <a href="{% url 'predict_heart' %}" class="btn btn-outline-primary rounded-pill px-4">Nouveau test</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="medical-card">
+                <div class="stepper">
+                    <div class="step completed">1</div>
+                    <div class="step active">2</div>
+                    <div class="step">3</div>
+                </div>
+
+                <h3 class="fw-bold mb-4 text-center">Bilan de Santé Cardiaque</h3>
+                <p class="text-center text-muted mb-5">Remplissez précisément vos informations biométriques pour une analyse optimale.</p>
+                
+                <form method="post" id="diagForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        {% for field in form %}
+                        <div class="col-md-4 mb-4">
+                            <label class="form-label">
+                                {{ field.label }}
+                                <i class="fas fa-circle-info ms-1" style="color: var(--secondary); cursor: pointer;" data-tippy-content="{{ field.help_text }}"></i>
+                            </label>
+                            
+                            {% if field.name in "sex cp fbs restecg exang slope thal" %}
+                                <select name="{{ field.name }}" class="form-select">
+                                    {% for val, text in field.field.choices %}
+                                        <option value="{{ val }}" {% if field.value|stringformat:"s" == val|stringformat:"s" %}selected{% endif %}>{{ text }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <input type="number" step="any" name="{{ field.name }}" class="form-control" placeholder="Entrez la valeur..." value="{{ field.value|default:'' }}">
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-analyze w-100">
+                            <i class="fas fa-microchip me-2"></i> Lancer l'analyse intelligente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script>
+    tippy('[data-tippy-content]', { placement: 'top', animation: 'scale' });
+
+    document.getElementById('diagForm').onsubmit = function() {
+        document.getElementById('loading-overlay').style.display = 'flex';
+    };
+</script>
+
+{% if result %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const targetProbability = parseInt("{{ probability }}") || 0;
+        const progressCircle = document.getElementById('progressCircle');
+        const scoreText = document.getElementById('scoreText');
+        
+        const circumference = 339.292; 
+        
+        if (targetProbability > 50) {
+            progressCircle.classList.remove('progress-safe');
+            progressCircle.classList.add('progress-danger');
+            scoreText.style.color = 'var(--danger)';
+        } else if (targetProbability >= 20) {
+            progressCircle.classList.remove('progress-safe');
+            progressCircle.classList.add('progress-warning');
+            scoreText.style.color = 'var(--warning)';
+        } else {
+            scoreText.style.color = 'var(--safe)';
+        }
+
+        const offset = circumference - (targetProbability / 100) * circumference;
+        
+        setTimeout(() => {
+            progressCircle.style.strokeDashoffset = offset;
+        }, 100);
+
+        let currentNumber = 0;
+        const duration = 1500;
+        const frameRate = 30;
+        const totalFrames = duration / frameRate;
+        const increment = targetProbability / totalFrames;
+
+        const counter = setInterval(() => {
+            currentNumber += increment;
+            if (currentNumber >= targetProbability) {
+                currentNumber = targetProbability;
+                clearInterval(counter);
+            }
+            scoreText.innerHTML = Math.round(currentNumber) + '%';
+        }, frameRate);
+    });
+</script>
+{% endif %}
+
+</body>
+</html>
